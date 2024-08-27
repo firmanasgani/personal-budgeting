@@ -29,7 +29,8 @@ class UserRepository(BaseRepository):
             user = Users(
                 id=str(uuid.uuid4()),
                 username=username,
-                fullname=fullname
+                fullname=fullname,
+                is_deleted=0
             )
 
             user.set_password(password)
@@ -45,7 +46,7 @@ class UserRepository(BaseRepository):
 
     def get_users(self):
         with self as db:
-            users = db.query(Users).all()
+            users = db.query(Users).filter(Users.is_deleted==0).all()
             users_list = [
                 {
                     "id": user.id,
@@ -62,7 +63,7 @@ class UserRepository(BaseRepository):
 
     def get_user_by_id(self, id):
         with self as db:
-            user = db.query(Users).filter(Users.id == id).first()
+            user = db.query(Users).filter(Users.id == id).filter(Users.is_deleted==0).first()
             if not user:
                 return None
             
@@ -87,7 +88,7 @@ class UserRepository(BaseRepository):
             user.username = username
             user.fullname = fullname
             if password:
-                user.password = Users.set_password(password)
+                user.set_password(password)
             return user
         
     

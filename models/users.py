@@ -13,7 +13,7 @@ class Users(Base):
     username = mapped_column(String, nullable=False)
     fullname = mapped_column(String, nullable=False)
     password = mapped_column(String, nullable=False)
-    is_deleted = mapped_column(Integer)
+    is_deleted = mapped_column(Integer, default=0)
     time_updated = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     def set_password(self, password):

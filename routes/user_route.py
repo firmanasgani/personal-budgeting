@@ -50,4 +50,14 @@ def update_users(id):
         return {"message": "success update user"}, 200
     except ValueError as e:
         return {"message": str(e)}, 400
+    
+@users_routes.route('/user/<id>', methods=['DELETE'])
+def delete_users(id):
+    try:
+        user = service.delete_user(id)
+        if user is None:
+            return {"message": "User not found"}, 404
+        return {"message": "success delete user"}, 200
+    except ValueError as e:
+        return {"message": str(e)}, 400
  

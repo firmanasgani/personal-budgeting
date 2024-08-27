@@ -50,7 +50,7 @@ class UserService:
             self.validate_password(password)
         return self.repository.update_user(id, username, fullname, password)
     
-    def delete_users(self, id):
+    def delete_user(self, id):
         return self.repository.delete_user(id)
     
 
