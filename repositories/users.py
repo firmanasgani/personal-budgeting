@@ -20,23 +20,44 @@ class BaseRepository:
         self.db.close()
 
 class UserRepository(BaseRepository):
-    def insert_user(self, username, fullname, password):
+    def insert_user(self, username: str, fullname: str, password: str) -> Users:
+        """Insert a new user into the database."""
         with self as db:
-            id=uuid.uuid4()
-            Users(id=id, username=username, fullname=fullname, password=password)
+            check_username = db.query(Users).filter(Users.username == username).first()
+            if check_username:
+                return None
+            user = Users(
+                id=str(uuid.uuid4()),
+                username=username,
+                fullname=fullname
+            )
+
+            user.set_password(password)
+            db.add(user)
+            db.commit()
             users = {
-                "id": id,
-                "username": username,
-                "fullname": fullname
+                "id": user.id,
+                "username": user.username,
+                "fullname": user.fullname
             }
             return users
+            
 
     def get_users(self):
         with self as db:
             users = db.query(Users).all()
+            users_list = [
+                {
+                    "id": user.id,
+                    "username": user.username,
+                    "fullname": user.fullname
+                }
+                for user in users
+            ]
+        
             if not users:
                 return None
-            return users
+            return users_list
 
 
     def get_user_by_id(self, id):
@@ -44,7 +65,18 @@ class UserRepository(BaseRepository):
             user = db.query(Users).filter(Users.id == id).first()
             if not user:
                 return None
-            return user
+            
+            if user.is_deleted == 1:
+                return None
+            
+            user_list = [
+                {
+                    "id": user.id,
+                    "username": user.username,
+                    "fullname": user.fullname
+                }
+            ]
+            return user_list
         
     
     def update_user(self, id, username, fullname, password):
@@ -55,7 +87,7 @@ class UserRepository(BaseRepository):
             user.username = username
             user.fullname = fullname
             if password:
-                user.password = password
+                user.password = Users.set_password(password)
             return user
         
     

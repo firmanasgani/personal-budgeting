@@ -1,9 +1,9 @@
-from model.base import Base
+from models.base import Base
 
 
 from sqlalchemy.sql import func
 from sqlalchemy import String, Integer, DateTime
-from sqlalchemy import mapped_column
+from sqlalchemy.orm import mapped_column
 import bcrypt
 
 class Users(Base):
