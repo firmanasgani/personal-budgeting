@@ -1,11 +1,12 @@
 from flask import Flask
 from dotenv import load_dotenv
 from utils.connection import connection
-from modles.users import Users
+from models.users import Users
 from sqlalchemy.orm import sessionmaker
 from routes.user_route import users_routes
 from flask_jwt_extended import JWTManager
 import os
+from datetime import timedelta
 load_dotenv()
 
 app = Flask(__name__)
@@ -13,8 +14,9 @@ app.register_blueprint(users_routes)
 
 jwt = JWTManager(app)
 app.config["JWT_SECRET_KEY"] = os.getenv("SECRET")
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = os.getenv("TOKEN_EXPIRES")
-app.config['JWT_REFRESH_TOKEN_EXPIRES'] = os.getenv("REFRESH_TOKEN_EXPIRES")
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=int(os.getenv("TOKEN_EXPIRES")))
+app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(hours=int(os.getenv("REFRESH_TOKEN_EXPIRES")))
+
 
 
 @jwt.user_identity_loader
@@ -57,6 +59,7 @@ def missing_token_callback(error):
 
 @app.route('/')
 def hello_world():
+    
     return 'Hello, World!'
 
 
