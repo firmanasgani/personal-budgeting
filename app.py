@@ -24,16 +24,17 @@ app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(hours=int(os.getenv("REFRESH
 
 # @jwt.user_identity_loader
 # def user_identity_lookup(users):
-#     return users["id"]
+#     return users
 
 # @jwt.user_identity_loader
 # def user_lookup_callback(_jwt_header, jwt_data):
 #     identity = jwt_data["sub"]
+#     print(identity)
 #     Session = sessionmaker(connection)
 #     db = Session()
 #     user = db.query(Users).filter(Users.id == identity).first()
 #     db.close()
-#     return user
+    #return user
 
 @jwt.expired_token_loader
 def expired_token_callback(jwt_header, jwt_data):

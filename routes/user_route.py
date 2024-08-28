@@ -12,16 +12,16 @@ repository: UserRepository = UserRepository()
 service: UserService = UserService(repository=repository)
 
 
-@jwt_required()
 @users_routes.route('/users', methods=['GET'])
+@jwt_required()
 def get_all_users():
     users = service.get_all_users()
     if users is None:
         return {"message": "Users not found"}, 404
     return {"users": users}, 200
 
-@jwt_required()
 @users_routes.route('/user/<id>', methods=['GET'])
+@jwt_required()
 def get_users_by_id(id):
     user = service.get_users_by_id(id)
     if user is None:
@@ -43,8 +43,8 @@ def create_user():
     except ValueError as e:
         return {"message": str(e)}, 400
 
-@jwt_required()   
 @users_routes.route('/user/<id>', methods=['PUT'])
+@jwt_required()   
 def update_users(id):
     username = request.form['username']
     fullname = request.form['fullname']
@@ -60,8 +60,8 @@ def update_users(id):
         return {"message": str(e)}, 400
     
 
-@jwt_required()
 @users_routes.route('/user/<id>', methods=['DELETE'])
+@jwt_required()
 def delete_users(id):
     try:
         user = service.delete_user(id)
