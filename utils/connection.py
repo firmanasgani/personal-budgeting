@@ -1,10 +1,23 @@
 from sqlalchemy import create_engine
 import os
 
-mysql_host = os.getenv("mysql_host")
+hostname = os.getenv("DB_HOST")
+port = os.getenv("DB_PORT")
+username = os.getenv("DB_USER")
+password = os.getenv("DB_PASS")
+database = os.getenv("DB_NAME")
+
+ENV = os.getenv("NODE_ENV")
 
 print("Connecting to database")
-engine = create_engine(mysql_host, pool_pre_ping=True,
+mysql_url = f"mysql+mysqlconnector://{username}:{password}@{hostname}/{database}"
+if ENV == '':
+    print("This API on development mode")
+    engine = create_engine(mysql_url, pool_pre_ping=True,
     echo=True, future=True)
+else:
+    print("This API use Production mode")
+    engine = create_engine(mysql_url)
+
 connection = engine.connect()
 print("Database connected")

@@ -1,5 +1,4 @@
 from repositories.users import UserRepository
-import re
 
 class UserService:
     def __init__(self, repository):
