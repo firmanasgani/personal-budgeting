@@ -51,7 +51,7 @@ def delete_transaction(id):
 @jwt_required()
 def update_transaction(id):
     user_id = get_jwt_identity()
-    category_id = request.form['category']
+    category_id = request.form['category_id']
     amount = request.form['amount']
     description = request.form['description']
     date_transaction = request.form['date_transaction']

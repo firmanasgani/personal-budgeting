@@ -1,4 +1,5 @@
 from models.transaction import Transaction
+from models.category import Category
 from utils.connection import connection
 from sqlalchemy import desc, asc
 from sqlalchemy.orm import sessionmaker
@@ -25,17 +26,22 @@ class TransactionRepository(BaseRepository):
             transactions = db.query(Transaction).filter(Transaction.userid == user_id).order_by(desc(Transaction.date_transaction)).all()
             if transactions is None:
                 return None
-            transactions_list = [
-                 {
-                     "id": transaction.id,
-                     "userid": transaction.userid,
-                     "categoryid": transaction.categoryid,
-                     "amount": transaction.amount,
-                     "date_created": transaction.date_created,
-                     "description": transaction.description,
-                     "date_created": transaction.date_created
-                 } for transaction in transactions
-             ]
+            
+            transactions_list = []
+            for transaction in transactions:
+                categoryName = db.query(Category).filter(Category.id == transaction.categoryid).first()
+                transactions_list.append(
+                    {
+                        "id": transaction.id,
+                        "userid": transaction.userid,
+                        "categoryid": transaction.categoryid,
+                        "categoryName": categoryName.name,
+                        "amount": transaction.amount,
+                        "date_transaction": transaction.date_transaction,
+                        "description": transaction.description
+                    }
+                )
+        
 
             return transactions_list
         
@@ -89,6 +95,7 @@ class TransactionRepository(BaseRepository):
                 return None
             if user_id != transaction.userid:
                 return None
-            db.delete()
+            db.delete(transaction)
+            db.commit()
             return transaction
         

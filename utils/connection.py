@@ -11,6 +11,7 @@ ENV = os.getenv("NODE_ENV")
 
 print("Connecting to database")
 mysql_url = f"mysql+mysqlconnector://{username}:{password}@{hostname}/{database}"
+print(mysql_url)
 if ENV == '':
     print("This API on development mode")
     engine = create_engine(mysql_url, pool_pre_ping=True,
