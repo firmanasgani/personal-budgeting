@@ -10,6 +10,7 @@ bcrypt = "*"
 mysql-connector-python = "*"
 python-dotenv = "*"
 flask-jwt-extended = "*"
+gunicorn= "*"
 
 [dev-packages]
 
