@@ -2,7 +2,6 @@ from models.budget import Budget
 from utils.connection import connection
 from sqlalchemy.orm import sessionmaker
 import uuid
-from datetime import datetime
 
 class BaseRepository:
     def __init__(self):

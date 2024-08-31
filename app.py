@@ -11,6 +11,7 @@ from routes.user_route import users_routes
 from routes.auth_route import auth_routes
 from routes.cateogry_route import categories_routes
 from routes.budget_route import budget_routes
+from routes.transaction_route import transaction_routes
 
 load_dotenv()
 
@@ -19,6 +20,7 @@ app.register_blueprint(users_routes)
 app.register_blueprint(auth_routes)
 app.register_blueprint(categories_routes)
 app.register_blueprint(budget_routes)
+app.register_blueprint(transaction_routes)
 
 jwt = JWTManager(app)
 app.config["JWT_SECRET_KEY"] = os.getenv("SECRET")
