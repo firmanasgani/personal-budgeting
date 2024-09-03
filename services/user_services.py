@@ -9,10 +9,11 @@ class UserService:
         if not password:
             raise ValueError("Password is not define")
         if len(password) <= 8:
+            print(len(password))
             raise ValueError("Password must contains more than 8 characters")
         
         
-    def create_user(self, username: str, password: str, fullname: str) -> dict:
+    def create_user(self, username: str, fullname: str, password: str) -> dict:
         """
         Create a new user in the database.
 

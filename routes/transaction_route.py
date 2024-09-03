@@ -29,6 +29,13 @@ def get_transactions():
         return {"message": "Transactions not found"}, 404
     return {"transactions": transactions}, 200
 
+@transaction_routes.route('/transaction_month')
+def get_transaction_month():
+    transactions = service.get_transactions_month()
+    if transactions is None:
+        return {"message": "Transactions not found"}, 404
+    return {"transactions": transactions}, 200
+
 @transaction_routes.route('/transaction/<id>', methods=["GET"])
 @jwt_required()
 def get_transaction_by_id(id):

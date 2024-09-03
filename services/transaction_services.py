@@ -16,6 +16,8 @@ class TransactionService:
     def get_all_transaction(self, user_id):
         return self.repository.get_all_transaction(user_id)
     
+    def get_transactions_month(self):
+        return self.repository.get_transactions_month()
     def get_transaction_by_id(self, transaction_id: int) -> dict:
         """
         Get a transaction by its ID.

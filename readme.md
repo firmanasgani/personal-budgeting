@@ -40,7 +40,7 @@ pipenv install
 
 Set up the database:
 
-Create a MySQL database.
+Create a MySQL database. 
 Update the database configuration in the utils/connection.py file with your MySQL credentials.
 
 Run the application:

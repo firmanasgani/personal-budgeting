@@ -2,7 +2,7 @@ from models.base import Base
 
 from sqlalchemy.sql import func
 from sqlalchemy import String, Integer, DateTime,Enum
-from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import mapped_column, relationship
 
 class Category(Base):
     __tablename__ = "category"
@@ -16,3 +16,4 @@ class Category(Base):
     time_updated = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     updated_by = mapped_column(String, nullable=False)
     type=mapped_column(Enum("expenses", "income", name="type"), nullable=False)
+    transactions = relationship('Transaction', back_populates='category')

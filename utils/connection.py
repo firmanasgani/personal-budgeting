@@ -10,7 +10,7 @@ database = os.getenv("DB_NAME")
 ENV = os.getenv("NODE_ENV")
 
 print("Connecting to database")
-mysql_url = f"mysql+mysqlconnector://{username}:{password}@{hostname}/{database}"
+mysql_url = f"mysql+mysqlconnector://{username}:{password}@{hostname}:{port}/{database}"
 print(mysql_url)
 if ENV == '':
     print("This API on development mode")
