@@ -11,6 +11,7 @@ mysql-connector-python = "*"
 python-dotenv = "*"
 flask-jwt-extended = "*"
 gunicorn= "*"
+flask-cors = "*"
 
 [dev-packages]
 

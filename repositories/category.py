@@ -1,11 +1,13 @@
 from models.category import Category
+from models.transaction import Transaction
 from utils.connection import connection
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy import desc, asc,  create_engine, func, and_
 import uuid
 
 class BaseRepository:
     def __init__(self):
-        self.Session = sessionmaker(connection)
+        self.Session = scoped_session(sessionmaker(connection))
         self.db = self.Session()
 
     def __enter__(self):
@@ -19,16 +21,49 @@ class BaseRepository:
         self.db.close()
 
 class CategoryRepository(BaseRepository):
-    def get_all_categories(self):
+    def get_all_categories(self, type_category, user):
+        start_date = '2024-08-25'
+        end_date = '2024-09-24'
         with self as db:
-            categories =  db.query(Category).filter(Category.is_deleted==0).all()
+            query = db.query(
+                Category.id,
+                Category.name,
+                Category.code,
+                Category.type,
+                func.coalesce(func.count(Transaction.id), 0).label('total_ctg'),
+                func.coalesce(func.sum(Transaction.amount), 0).label('sum_ctg')
+            ).outerjoin(
+                Transaction,
+            and_(
+                Transaction.categoryid == Category.id,
+                Transaction.userid == user,
+                Transaction.date_transaction.between(start_date, end_date)
+            )
+            ).filter(
+                Category.created_by == user
+            )
 
+            if type_category:
+                query = query.filter(Category.type == type_category)
+
+            query = query.group_by(
+                Category.id,
+                Category.name,
+                Category.code
+            )
+
+            # Execute the query
+            categories = query.all()
+
+            
             categories_list = [
                 {
                     "id": category.id,
                     "name": category.name,
                     "code": category.code,
-                    "type": category.type
+                    "type": category.type,
+                    "total_ctg": category.total_ctg,
+                    "sum_ctg": category.sum_ctg
                 } for category in categories
             ]
 

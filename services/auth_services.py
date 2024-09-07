@@ -5,4 +5,5 @@ class AuthService:
         self.repository: AuthRepository = repository
 
     def login(self, username: str, password: str) -> dict:
+        print(username)
         return self.repository.login(username, password)

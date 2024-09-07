@@ -6,6 +6,7 @@ from models.users import Users
 from flask_jwt_extended import JWTManager
 import os
 from datetime import timedelta
+from flask_cors import CORS
 
 from routes.user_route import users_routes
 from routes.auth_route import auth_routes
@@ -21,7 +22,7 @@ app.register_blueprint(auth_routes)
 app.register_blueprint(categories_routes)
 app.register_blueprint(budget_routes)
 app.register_blueprint(transaction_routes)
-
+CORS(app, resources={r"/*": {"origins": "*"}})
 jwt = JWTManager(app)
 app.config["JWT_SECRET_KEY"] = os.getenv("SECRET")
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=int(os.getenv("TOKEN_EXPIRES")))

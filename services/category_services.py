@@ -15,8 +15,8 @@ class CategoryService:
 
         return self.repository.create_category(name, code, type, user)
     
-    def get_all_categories(self):
-        return self.repository.get_all_categories()
+    def get_all_categories(self, type, user):
+        return self.repository.get_all_categories(type,  user)
     
     def get_category_by_id(self, id):
         return self.repository.get_category_by_id(id)

@@ -28,7 +28,9 @@ def create_category():
 @categories_routes.route('/category', methods=['GET'])
 @jwt_required()
 def get_all_categories():
-    categories = service.get_all_categories()
+    type = request.args.get('type', '', type=str)
+    user = get_jwt_identity()
+    categories = service.get_all_categories(type, user)
 
     if categories is None:
         return {"message": "Categories not found"}, 404
