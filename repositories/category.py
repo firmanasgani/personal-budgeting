@@ -21,9 +21,11 @@ class BaseRepository:
         self.db.close()
 
 class CategoryRepository(BaseRepository):
-    def get_all_categories(self, type_category, user):
-        start_date = '2024-08-25'
-        end_date = '2024-09-24'
+    def get_all_categories(self, type_category, user, start_date, end_date):
+        if start_date == "":
+            start_date = '2024-08-25'
+        if end_date == "":
+            end_date = '2024-09-24'
         with self as db:
             query = db.query(
                 Category.id,

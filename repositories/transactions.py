@@ -2,8 +2,9 @@ from models.transaction import Transaction
 from models.category import Category
 from models.budget import Budget
 from utils.connection import connection
-from sqlalchemy import desc, asc, func, case
+from sqlalchemy import desc, asc, func, case, and_
 from sqlalchemy.orm import sessionmaker, joinedload
+from sqlalchemy.exc import SQLAlchemyError
 import uuid
 
 class BaseRepository:
@@ -15,42 +16,58 @@ class BaseRepository:
         return self.db
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.db.close()
         if exc_type:
+            print(exc_type, exc_val, exc_tb)
             self.db.rollback()
+            if isinstance(exc_val, SQLAlchemyError):
+                print(f"SQLAlchemy Error: {exc_val}")
+            
         else:
             self.db.commit()
-
+        self.db.close()
 class TransactionRepository(BaseRepository):
-    def get_all_transaction(self, user_id):
-        with self as db:
-            transactions = (
-               db.query(Transaction)
-                .options(joinedload(Transaction.category))  # Assuming Transaction has a relationship 'category'
-                .filter(Transaction.userid == user_id)
-                .order_by(desc(Transaction.date_transaction))
-                .all()
-            )
+    def get_all_transaction(self, user_id, category, start_date, end_date):
+        try:
+            with self as db:
+                transactions = (
+                   db.query(Transaction)
+                    .options(joinedload(Transaction.category)) 
+                    .filter(
+                        Transaction.userid == user_id, 
+                        Transaction.date_transaction.between(start_date,end_date),
+                        Transaction.category.has(type='expenses')
+                    )
+                    .order_by(asc(Transaction.date_transaction))
+                )
 
-            # Check if no transactions were found
-            if not transactions:
-                return None
+                if category:
+                    transactions = transactions.filter(Transaction.categoryid == category)
 
-            # Construct the transactions list with the joined category name
-            transactions_list = [
-                {
-                    "id": transaction.id,
-                    "userid": transaction.userid,
-                    "categoryid": transaction.categoryid,
-                    "categoryName": transaction.category.name,
-                    "amount": transaction.amount,
-                    "date_transaction": transaction.date_transaction,
-                    "description": transaction.description
-                }
-                for transaction in transactions
-            ]
+                transactions = transactions.all()
 
-            return transactions_list
+
+                # Check if no transactions were found
+                if not transactions:
+                    return None
+                # Construct the transactions list with the joined category name
+                transactions_list = [
+                    {
+                        "id": transaction.id,
+                        "userid": transaction.userid,
+                        "categoryid": transaction.categoryid,
+                        "categoryName": transaction.category.name,
+                        "amount": transaction.amount,
+                        "date_transaction": transaction.date_transaction,
+                        "description": transaction.description
+                    }
+                    for transaction in transactions
+                ]
+                return transactions_list
+        except SQLAlchemyError as e:
+            print(f"SQLAlchemy Error: {e}")
+            self.db.rollback()
+            return None
+
         
     def get_transactions_month(self):
         with self as db:

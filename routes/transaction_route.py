@@ -24,8 +24,11 @@ def create_transaction():
 @jwt_required()
 def get_transactions():
     user_id = get_jwt_identity()
-    transactions = service.get_all_transaction(user_id)
-    if len(transactions) < 1:
+    category = request.args.get('category', '', type=str)
+    start_date = request.args.get('start_date', '', type=str)
+    end_date = request.args.get('end_date', '', type=str)
+    transactions = service.get_all_transaction(user_id, category, start_date, end_date)
+    if transactions is None:
         return {"message": "Transactions not found"}, 404
     return {"transactions": transactions}, 200
 

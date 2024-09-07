@@ -29,8 +29,10 @@ def create_category():
 @jwt_required()
 def get_all_categories():
     type = request.args.get('type', '', type=str)
+    start_date = request.args.get('start_date', '', type=str)
+    end_date =request.args.get('end_date', '', type=str)
     user = get_jwt_identity()
-    categories = service.get_all_categories(type, user)
+    categories = service.get_all_categories(type, user, start_date, end_date)
 
     if categories is None:
         return {"message": "Categories not found"}, 404

@@ -13,8 +13,8 @@ class TransactionService:
     def delete_transaction(self, id, user_id):
         return self.repository.delete_transaction(id, user_id)
     
-    def get_all_transaction(self, user_id):
-        return self.repository.get_all_transaction(user_id)
+    def get_all_transaction(self, user_id, category, start_date, end_date):
+        return self.repository.get_all_transaction(user_id, category, start_date, end_date)
     
     def get_transactions_month(self):
         return self.repository.get_transactions_month()
