@@ -42,7 +42,7 @@ class CategoryRepository(BaseRepository):
                 Transaction.date_transaction.between(start_date, end_date)
             )
             ).filter(
-                Category.created_by == user
+                Category.created_by == user, Category.is_deleted == 0
             )
 
             if type_category:
