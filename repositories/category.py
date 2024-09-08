@@ -145,4 +145,9 @@ class CategoryRepository(BaseRepository):
             if not category:
                 return None
             category.is_deleted = 1
-            return category
+            category_dict= category.__dict__
+            category_dict = {
+                    key: value for key, value in category_dict.items() if not key.startswith("_")
+            }
+
+            return category_dict
