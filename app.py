@@ -10,7 +10,7 @@ from flask_cors import CORS
 
 from routes.user_route import users_routes
 from routes.auth_route import auth_routes
-from routes.cateogry_route import categories_routes
+from routes.category_route import categories_routes
 from routes.budget_route import budget_routes
 from routes.transaction_route import transaction_routes
 

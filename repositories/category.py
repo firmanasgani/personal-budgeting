@@ -131,9 +131,12 @@ class CategoryRepository(BaseRepository):
             category.updated_by = user
 
             db.commit()
+            category_dict= category.__dict__
+            category_dict = {
+                    key: value for key, value in category_dict.items() if not key.startswith("_")
+            }
 
-          
-            return category
+            return category_dict
         
     def delete_category(self, id):
         with self as db:

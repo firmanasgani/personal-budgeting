@@ -56,10 +56,8 @@ def update_category(id):
     code = request.form['code']
     type = request.form['type']
     user = get_jwt_identity()
-
     try:
         category = service.update_category(id, name, code, type, user)
-
         if category is None:
             return {"message": "Category not found"}, 404
         return {"category": category}, 200
