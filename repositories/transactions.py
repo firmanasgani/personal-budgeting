@@ -46,10 +46,8 @@ class TransactionRepository(BaseRepository):
                 transactions = transactions.all()
 
 
-                # Check if no transactions were found
                 if not transactions:
                     return None
-                # Construct the transactions list with the joined category name
                 transactions_list = [
                     {
                         "id": transaction.id,
@@ -113,15 +111,21 @@ class TransactionRepository(BaseRepository):
 
     def get_transaction_by_id(self, id):
         with self as db:
-            transaction = db.query(Transaction).filter(Transaction.id == id).first()
+            transaction = db.query(Transaction).options(joinedload(Transaction.category)).filter(Transaction.id == id).first()
+            
             if transaction is None:
                 return None
-            transaction_list = transaction.__dict__
-            transaction_list = {
-                key: value for key, value in transaction_list.items() if not key.startswith("_")
+            transaction_dict = {
+                'id': transaction.id,
+                'userid': transaction.userid,
+                'categoryid': transaction.categoryid,
+                'categoryName': transaction.category.name,
+                'amount': transaction.amount,
+                'description': transaction.description,
+                'date_transaction': transaction.date_transaction
             }
+            return transaction_dict
 
-            return transaction_list
         
     def create_transactions(self, user_id, category_id, amount, description, date_transaction):
         with self as db:

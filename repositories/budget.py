@@ -1,6 +1,6 @@
 from models.budget import Budget
 from utils.connection import connection
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, joinedload
 import uuid
 
 class BaseRepository:
@@ -21,7 +21,7 @@ class BaseRepository:
 class BudgetRepository(BaseRepository):
     def get_all_budget(self, user_id):
         with self as db:
-            budget = db.query(Budget).filter(Budget.userid == user_id).filter(Budget.is_deleted == 0).all()
+            budget = db.query(Budget).options(joinedload(Budget.category)).filter(Budget.userid == user_id).filter(Budget.is_deleted == 0).all()
             if budget is None:
                 return None
 
@@ -31,6 +31,7 @@ class BudgetRepository(BaseRepository):
                     "userid": budget.userid,
                     "categoryid": budget.categoryid,
                     "amount": budget.amount,
+                    "categoryName": budget.category.name,
                     "start_date": budget.start_date,
                     "end_date": budget.end_date,
                     "description": budget.description
@@ -41,12 +42,19 @@ class BudgetRepository(BaseRepository):
         
     def get_budget_by_id(self, id):
         with self as db:
-            budget = db.query(Budget).filter(Budget.id == id).filter(Budget.is_deleted==0).first()
+            budget = db.query(Budget).options(joinedload(Budget.category)).filter(Budget.id == id).filter(Budget.is_deleted==0).first()
             if budget is None:
                 return None
-            budget_list = budget.__dict__
+           
             budget_list = {
-                key: value for key, value in budget_list.items() if not key.startswith("_")
+                "id": budget.id,
+                "userid": budget.userid,
+                "categoryid": budget.categoryid,
+                "amount": budget.amount,
+                "categoryName": budget.category.name,
+                "start_date": budget.start_date,
+                "end_date": budget.end_date,
+                "description": budget.description
             }
 
             return budget_list

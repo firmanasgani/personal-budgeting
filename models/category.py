@@ -17,3 +17,4 @@ class Category(Base):
     updated_by = mapped_column(String, nullable=False)
     type=mapped_column(Enum("expenses", "income", name="type"), nullable=False)
     transactions = relationship('Transaction', back_populates='category')
+    budget = relationship('Budget', back_populates="category")
