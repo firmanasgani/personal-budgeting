@@ -5,8 +5,8 @@ class BudgetService:
         self.repository: BudgetRepository = repository
         self.budgets = []
     
-    def get_all_budget(self, user_id):
-        return self.repository.get_all_budget(user_id)
+    def get_all_budget(self, user_id, category, start_date, end_date):
+        return self.repository.get_all_budget(user_id, category, start_date, end_date)
     
     def get_budget_by_id(self, id):
         return self.repository.get_budget_by_id(id)

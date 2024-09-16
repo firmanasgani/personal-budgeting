@@ -12,6 +12,7 @@ python-dotenv = "*"
 flask-jwt-extended = "*"
 gunicorn= "*"
 flask-cors = "*"
+python-dateutil = "*"
 
 [dev-packages]
 

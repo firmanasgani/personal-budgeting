@@ -11,14 +11,18 @@ service: BudgetService = BudgetService(repository=repository)
 @jwt_required()
 def get_budgets():
    user_id = get_jwt_identity()
-   budget = service.get_all_budget(user_id)
+   category = request.args.get('category', '', type=str)
+   start_date = request.args.get('start_date', '', type=str)
+   end_date = request.args.get('end_date', '', type=str)
+
+   budget = service.get_all_budget(user_id, category, start_date, end_date)
    if budget is None:
        return {
            "message": "Budget not found"
        }, 404
 
    return {
-       "budget": budget
+       "data": budget
    }, 200
 
 @budget_routes.route('/budget/<id>', methods=['GET'])

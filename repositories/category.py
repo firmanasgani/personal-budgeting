@@ -2,6 +2,8 @@ from models.category import Category
 from models.transaction import Transaction
 from utils.connection import connection
 from sqlalchemy.orm import sessionmaker, scoped_session
+from dateutil.relativedelta import relativedelta
+from datetime import datetime
 from sqlalchemy import desc, asc,  create_engine, func, and_
 import uuid
 
@@ -23,9 +25,9 @@ class BaseRepository:
 class CategoryRepository(BaseRepository):
     def get_all_categories(self, type_category, user, start_date, end_date):
         if start_date == "":
-            start_date = '2024-08-25'
+            start_date = (datetime.now() - relativedelta(months=1)).replace(day=25).strftime('%Y-%m-%d')
         if end_date == "":
-            end_date = '2024-09-24'
+            end_date = datetime.now().replace(day=24).strftime('%Y-%m-%d')
         with self as db:
             query = db.query(
                 Category.id,

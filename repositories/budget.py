@@ -1,5 +1,7 @@
 from models.budget import Budget
 from utils.connection import connection
+from dateutil.relativedelta import relativedelta
+from datetime import datetime
 from sqlalchemy.orm import sessionmaker, joinedload
 import uuid
 
@@ -19,9 +21,22 @@ class BaseRepository:
             self.db.commit()
 
 class BudgetRepository(BaseRepository):
-    def get_all_budget(self, user_id):
+    def get_all_budget(self, user_id, category, start_date, end_date):
         with self as db:
-            budget = db.query(Budget).options(joinedload(Budget.category)).filter(Budget.userid == user_id).filter(Budget.is_deleted == 0).all()
+            if start_date == '':
+                start_date = (datetime.now() - relativedelta(months=1)).replace(day=25).strftime('%Y-%m-%d')
+
+            if end_date == '':
+                end_date = datetime.now().replace(day=24).strftime('%Y-%m-%d')
+            
+
+            query = db.query(Budget).options(joinedload(Budget.category)).filter(Budget.userid == user_id).filter(Budget.is_deleted == 0, Budget.start_date >= start_date, Budget.end_date <= end_date)
+
+            if category != '':
+                query = query.filter(Budget.category == category)
+
+            budget = query.all()
+            total_budget = query.count()
             if budget is None:
                 return None
 
@@ -38,7 +53,10 @@ class BudgetRepository(BaseRepository):
                 } for budget in budget
             ]
 
-            return budget_list
+            return {
+                "budget": budget_list,
+                "total":total_budget
+            }
         
     def get_budget_by_id(self, id):
         with self as db:
